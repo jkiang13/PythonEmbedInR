@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-10.15]
-        r: [3.4.4]
+        r: [3.5]
 
     steps:
       - name: checkout
@@ -482,6 +482,8 @@ jobs:
       - name: mac-build-package
         if: runner.os == 'macOS'
         run: |
+            export MACOSX_DEPLOYMENT_TARGET="10.11"
+
             # need some additional headers (zlib) on catalina to compile python
             # https://stackoverflow.com/a/58349403
             for HEADER_PATH in /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/*
