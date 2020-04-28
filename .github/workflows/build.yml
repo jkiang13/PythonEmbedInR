@@ -482,7 +482,7 @@ jobs:
       - name: mac-build-package
         if: runner.os == 'macOS'
         run: |
-            export MACOSX_DEPLOYMENT_TARGET="10.11"
+            export MACOSX_DEPLOYMENT_TARGET=10.8
 
             # need some additional headers (zlib) on catalina to compile python
             # https://stackoverflow.com/a/58349403
