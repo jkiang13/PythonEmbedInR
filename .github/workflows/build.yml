@@ -4,7 +4,6 @@
 name: build
 
 on:
-
   # we build artifacts on every push and release.
   # on release events we additionally upload the artifacts to our RAN server
 
@@ -12,6 +11,9 @@ on:
   release:
     types:
       - published
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_10.3.app
 
 jobs:
   build:
