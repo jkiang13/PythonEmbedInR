@@ -127,6 +127,8 @@ jobs:
           wget $R_INSTALLER_URL
           sudo installer -pkg $R_INSTALLER_FILE -target /
 
+          echo xcodebuild -version
+
       - name: windows-env
         if: ${{runner.os == 'Windows'}}
         shell: bash
