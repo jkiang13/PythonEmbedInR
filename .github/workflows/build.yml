@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: print-env
         run: |
+          brew install gettext@0.21
+
           find /usr | grep "libint"
           echo $(otool -L '/usr/local/lib/libintl.8.dylib')
           echo $(otool -L '/usr/local/Cellar/gettext/0.21/lib/libintl.8.dylib') 
