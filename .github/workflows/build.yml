@@ -28,4 +28,6 @@ jobs:
       - name: print-env
         run: |
           find /usr | grep "libint"
+          echo $(otool -L '/usr/local/lib/libintl.8.dylib')
+          echo $(otool -L '/usr/local/Cellar/gettext/0.21/lib/libintl.8.dylib') 
 
