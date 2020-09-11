@@ -27,8 +27,8 @@ jobs:
     steps:
       - name: print-env
         run: |
-          brew unlink gettext
-          brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/d8d5099339909b5e5abf25449881257a27d829b9/Formula/gettext.rb
+          sudo brew unlink gettext
+          sudo brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/d8d5099339909b5e5abf25449881257a27d829b9/Formula/gettext.rb
 
           find /usr | grep "libint"
           echo $(otool -L '/usr/local/lib/libintl.8.dylib')
