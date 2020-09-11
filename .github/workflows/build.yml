@@ -117,7 +117,7 @@ jobs:
           echo "::set-env name=R::R"
 
           # downgrade gettext for better binary compatibility with older MacOS versions
-          brew unlink gettext$
+          #brew unlink gettext$
           brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/d8d5099339909b5e5abf25449881257a27d829b9/Formula/gettext.rb
 
       - name: mac-install-R
