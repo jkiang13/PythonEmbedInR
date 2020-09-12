@@ -124,7 +124,7 @@ jobs:
           brew unlink gettext
           brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/d8d5099339909b5e5abf25449881257a27d829b9/Formula/gettext.rb
 
-          echo $(xcodebuild -version)
+          echo "::set-env OPENSSL_DIR=::/usr/local/Cellar/openssl/1.0.2t" 
 
       - name: mac-install-R
         if: ${{runner.os == 'macOS'}}
@@ -213,6 +213,9 @@ jobs:
       - name: mac-build-package
         if: ${{runner.os == 'macOS'}}
         run: |
+            echo $OPENSSL_DIR
+            export OPENSSL_DIR
+
             # need some additional headers (zlib) on catalina to compile python
             # https://stackoverflow.com/a/58349403
             for HEADER_PATH in /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/*
