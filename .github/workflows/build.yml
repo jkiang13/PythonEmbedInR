@@ -27,7 +27,11 @@ jobs:
     steps:
       - name: print-env
         run: |
+          brew unlink openssl
+          brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/8b9d6d688f483a0f33fcfc93d433de501b9c3513/Formula/openssl.rb
+
           find /usr | grep "libcrypt"
+          find /usr | grep "libssl" 
           #          echo $(otool -L '/usr/local/lib/libintl.8.dylib')
           #          echo $(otool -L '/usr/local/Cellar/gettext/0.21/lib/libintl.8.dylib') 
 
