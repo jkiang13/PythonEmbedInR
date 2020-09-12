@@ -54,7 +54,7 @@ if [ $(uname) == "Darwin" ]; then
   # export LDFLAGS=-L/usr/local/opt/openssl/lib
 
   # sdk path needed for zlib on catalina
-  export CPPFLAGS="-I/usr/local/opt/openssl/include -I$(xcrun --show-sdk-path)/usr/include"
+  export CPPFLAGS="-mmacosx-version-min=10.11 -I/usr/local/opt/openssl/include -I$(xcrun --show-sdk-path)/usr/include"
 
   # However the above isn't enough since the libraries have to be bundled into 
   # the package
