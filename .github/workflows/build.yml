@@ -27,6 +27,7 @@ jobs:
     steps:
       - name: print-env
         run: |
+          set -e
           find /usr -name "*libcrypt*dylib"
           echo "***"
           find /usr -name "*libcrypt*dylib" -exec grep '_syslog$DARWIN_EXTSN' {} \; 
