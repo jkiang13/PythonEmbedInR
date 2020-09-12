@@ -27,9 +27,12 @@ jobs:
     steps:
       - name: print-env
         run: |
-          brew unlink openssl
-          brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/8b9d6d688f483a0f33fcfc93d433de501b9c3513/Formula/openssl.rb
-          echo $(grep -i darwin_extsn /usr/local/Cellar/openssl/1.0.2t/lib/libcrypto.1.0.0.dylib)
+          find /usr -name "*libcrypt*dylib"
+          echo "***"
+          find /usr -name "*libcrypt*dylib" -exec grep '_syslog$DARWIN_EXTSN' {} \; 
+          #brew unlink openssl
+          #brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/8b9d6d688f483a0f33fcfc93d433de501b9c3513/Formula/openssl.rb
+          #echo $(grep -i darwin_extsn /usr/local/Cellar/openssl/1.0.2t/lib/libcrypto.1.0.0.dylib)
           #find /usr | grep "libcrypt"
           #find /usr | grep "libssl" 
           #          echo $(otool -L '/usr/local/lib/libintl.8.dylib')
