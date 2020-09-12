@@ -28,9 +28,9 @@ jobs:
       - name: print-env
         run: |
           set -e
-          find /usr -name "*libcrypt*dylib"
+          find /usr -name "*libcrypt*dylib" || true
           echo "***"
-          find /usr -name "*libcrypt*dylib" -exec grep '_syslog$DARWIN_EXTSN' {} \; 
+          find /usr -name "*libcrypt*dylib" -exec grep '_syslog$DARWIN_EXTSN' {} \; || true
           #brew unlink openssl
           #brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/8b9d6d688f483a0f33fcfc93d433de501b9c3513/Formula/openssl.rb
           #echo $(grep -i darwin_extsn /usr/local/Cellar/openssl/1.0.2t/lib/libcrypto.1.0.0.dylib)
