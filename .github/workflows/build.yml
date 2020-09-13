@@ -218,7 +218,8 @@ jobs:
             export S3_RAN=staging-ran.synapse.org
 
             mkdir -p ~/openssl
-            aws s3 cp --recursive s3://staging-ran.synapse.org/openssl/* ~/openssl/
+            echo $(aws s3 cp --recursive s3://staging-ran.synapse.org/openssl/ ~/openssl/)
+            echo $(ls -l ~/openssl)
 
             export OPENSSL_DIR="~/openssl"
             echo $OPENSSL_DIR
