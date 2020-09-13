@@ -217,11 +217,11 @@ jobs:
             export AWS_DEFAULT_REGION=us-east-1
             export S3_RAN=staging-ran.synapse.org
 
-            mkdir -p ~/openssl
-            echo $(aws s3 cp --recursive s3://staging-ran.synapse.org/openssl/ ~/openssl/)
-            echo $(ls -l ~/openssl)
+            mkdir -p /tmp/pythonembed/openssl/lib
+            echo $(aws s3 cp --recursive s3://staging-ran.synapse.org/openssl/ /tmp/pythonembed/openssl/lib/)
+            echo $(ls -l /tmp/pythonembed/openssl/lib)
 
-            export OPENSSL_DIR="~/openssl"
+            export OPENSSL_DIR="/tmp/pythonembed/openssl/lib"
             echo $OPENSSL_DIR
 
             # need some additional headers (zlib) on catalina to compile python

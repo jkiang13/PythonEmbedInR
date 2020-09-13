@@ -63,9 +63,9 @@ if [ $(uname) == "Darwin" ]; then
   mkdir -p ${EMBED_PYTHON_DIR}/lib
 
   #OPENSSL_DIR="${OPENSSL_DIR:-/usr/local/opt/openssl}"
-  OPENSSL_DIR="~/openssl"
+  OPENSSL_DIR="/tmp/pythonembed/openssl"
   echo "configure ${OPENSSL_DIR}"
-  echo $(ls -l "${OPENSSL_DIR}/libcrypt*.dylib")
+  echo $(ls -l "${OPENSSL_DIR}/lib/libcrypt*.dylib")
   LIBCRYPTO_DYLIB_PATH=$(ls -a ${OPENSSL_DIR}/lib/libcrypto.1*.dylib)
   LIBCRYPTO_DYLIB_FILENAME=$(basename $LIBCRYPTO_DYLIB_PATH)
   LIBSSL_DYLIB_PATH=$(ls -a ${OPENSSL_DIR}/lib/libssl.1*.dylib)
