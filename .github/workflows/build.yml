@@ -124,8 +124,6 @@ jobs:
           brew unlink gettext
           brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/d8d5099339909b5e5abf25449881257a27d829b9/Formula/gettext.rb
 
-          echo "::set-env name=OPENSSL_DIR=::/usr/local/Cellar/openssl/1.0.2t" 
-
       - name: mac-install-R
         if: ${{runner.os == 'macOS'}}
         run: |
@@ -213,8 +211,17 @@ jobs:
       - name: mac-build-package
         if: ${{runner.os == 'macOS'}}
         run: |
+
+            export AWS_ACCESS_KEY_ID=${{secrets.S3_RAN_STAGING_AWS_ACCESS_KEY_ID}}
+            export AWS_SECRET_ACCESS_KEY=${{secrets.S3_RAN_STAGING_AWS_SECRET_ACCESS_KEY}}
+            export AWS_DEFAULT_REGION=us-east-1
+            export S3_RAN=staging-ran.synapse.org
+
+            mkdir -p ~/openssl
+            aws s3 cp --recursive s3://staging-ran.synapse.org/openssl/* ~/openssl/
+
+            export OPENSSL_DIR="~/openssl"
             echo $OPENSSL_DIR
-            export OPENSSL_DIR
 
             # need some additional headers (zlib) on catalina to compile python
             # https://stackoverflow.com/a/58349403
