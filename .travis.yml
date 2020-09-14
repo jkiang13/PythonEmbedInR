@@ -1,19 +1,36 @@
 language: bash
 
-env:
-  r_version=3.6.3
-  r_version=4.0.2
-
 matrix:
   include:
 
     - os: linux
       dist: bionic
+      env:
+        R_VERSION: 3.6.3
+
+    - os: linux
+      dist: bionic
+      env:
+        R_VERSION: 4.0.2
 
     - os: macosx
       osx_image: xcode9.4
+      env:
+        R_VERSION: 3.6.3
+
+    - os: macosx
+      osx_image: xcode9.4
+      env:
+        R_VERSION: 4.0.2
 
     - os: windows
+      env:
+        R_VERSION: 3.6.3
+
+    - os: windows
+      env:
+        R_VERSION: 4.0.2
 
 script:
-  - echo "matrix test"
+  - echo "matrix test $R_VERSION"
+
