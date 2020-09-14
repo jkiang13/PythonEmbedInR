@@ -102,7 +102,7 @@ install:
       echo "start /wait $R_INSTALLER_FILE /VERYSILENT /DIR=$R_DIR" > install_r.bat
       ./install_r.bat
 
-      export PATH=$R_DIR/bin:$PATH"
+      export PATH=$R_DIR/bin:$PATH
 
     else
       echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
