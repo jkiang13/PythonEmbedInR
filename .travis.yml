@@ -195,5 +195,6 @@ script:
     echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
     echo "library(PythonEmbedInR)" >> runTests.R
 
-    R --vanilla < runTests.R
+    echo "R --vanilla < runTests.R" > runTests.bat
+    ./runTests.bat
 
