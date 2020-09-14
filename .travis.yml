@@ -110,6 +110,10 @@ install:
 
       R_LIBS=$(echo $TRAVIS_BUILD_DIR | sed 's/\\/\//g')/R_LIBS
 
+      # R won't understand a windows bash path of the form /c/foo
+      # so convert to c:/foo
+      R_LIBS_NATIVE=$(awk 'NR==1,/\/c\//{sub(/\/c\//, "c:/")} 1')
+
     else
       echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
       exit 1
@@ -117,10 +121,11 @@ install:
     fi
 
     mkdir -p $R_LIBS
+    R_LIBS_NATIVE=${R_LIBS_NATIVE:-$R_LIBS}
 
     # install our R package dependencies
     echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
-    echo "if(length(list.of.packages)) install.packages(list.of.packages, lib='$R_LIBS', repos='http://cran.fhcrc.org')" >> installReqPkgs.R
+    echo "if(length(list.of.packages)) install.packages(list.of.packages, lib='$R_LIBS_NATIVE', repos='http://cran.fhcrc.org')" >> installReqPkgs.R
     R --vanilla < installReqPkgs.R 
 
 script:
