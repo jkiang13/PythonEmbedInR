@@ -180,3 +180,12 @@ script:
 
     fi
 
+    echo "Running tests"
+    echo ".libPaths(c('$R_LIBS', .libPaths()));" > runTests.R
+    echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
+    echo "source('testthat.R')" >> runTests.R
+    echo "library(PythonEmbedInR);" >> runTests.R
+    echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
+    echo "library(PythonEmbedInR)" >> runTests.R
+    $R --vanilla < runTests.R
+
