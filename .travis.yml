@@ -191,10 +191,8 @@ script:
     echo ".libPaths(c('$R_LIBS_NATIVE', .libPaths()));" > runTests.R
     echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
     echo "source('testthat.R')" >> runTests.R
-    echo "library(PythonEmbedInR);" >> runTests.R
+    echo "library('PythonEmbedInR', lib.loc='$R_LIBS_NATIVE');" >> runTests.R
     echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
-    echo "library(PythonEmbedInR)" >> runTests.R
-
-    echo "R --vanilla < runTests.R" > runTests.bat
-    ./runTests.bat
+    echo "library('PythonEmbedInR', lib.loc='$R_LIBS_NATIVE')" >> runTests.R
+    R --vanilla < runTests.R
 
