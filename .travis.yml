@@ -68,10 +68,6 @@ before_install:
       else
         R_TOOLS_FILE="Rtools35.exe"
         R_TOOLS_BIN="c:/Rtools/bin"
-
-        echo "start /wait $R_TOOLS_FILE /VERYSILENT" > install_rtools.bat
-        ./install_rtools.bat
-       
       fi
 
       curl -O "https://cran.r-project.org/bin/windows/Rtools/${R_TOOLS_FILE}"
