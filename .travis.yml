@@ -75,7 +75,7 @@ before_install:
       echo "start /wait $R_TOOLS_FILE /VERYSILENT" > install_rtools.bat
       ./install_rtools.bat
 
-      export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH
+      #export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH
     fi
 
 
@@ -187,5 +187,5 @@ script:
     echo "library(PythonEmbedInR);" >> runTests.R
     echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
     echo "library(PythonEmbedInR)" >> runTests.R
-    $R --vanilla < runTests.R
+    R --vanilla < runTests.R
 
