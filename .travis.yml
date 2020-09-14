@@ -35,7 +35,63 @@ matrix:
       env:
         R_VERSION: 4.0.2
 
-script:
+before_install:
+   - |
+    R_MAJOR_VERSION=$(echo $R_VERSION | cut -f1 -d".")
+
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      # on linux we need to add the R apt servers
+
+      if [[ "$R_MAJOR_VERSION" == "4" ]]; then
+        CRAN_VERSION="40"
+      else
+        # 3.5 and 3.6 both use "35" repos...
+        CRAN_VERSION="35"
+      fi
+
+      echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran${CRAN_VERSION}/" | sudo tee /etc/apt/sources.list.d/rcran.list >> /dev/null
+      echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu bionic-cran${CRAN_VERSION}/" | sudo tee -a /etc/apt/sources.list.d/rcran.list >> /dev/null
+      sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+      sudo apt-get update
+
+    elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      # on windows we need to install the appropriate set of R tools
+
+      R_INSTALLER_FILE="R-${R_VERSION}-win.exe"
+      # conveniently even the current version is available under "old"
+      R_INSTALLER_URL="https://cloud.r-project.org/bin/windows/base/old/${R_VERSION}/${R_INSTALLER_FILE}"
+
+      curl -O $R_INSTALLER_URL
+      if [ "$R_MAJOR_VERSION" == "4" ]; then
+        R_TOOLS_FILE="rtools40-x86_64.exe"
+        R_TOOLS_BIN="c:/rtools40/usr/bin"
+      else
+        R_TOOLS_FILE="Rtools35.exe"
+        R_TOOLS_BIN="c:/Rtools/bin"
+      fi
+
+      curl -O "https://cran.r-project.org/bin/windows/Rtools/${R_TOOLS_FILE}"
+
+      cmd.exe /C "start /wait $R_INSTALLER_FILE /VERYSILENT"
+      cmd.exe /C "start /wait $R_TOOLS_FILE /VERYSILENT"
+    fi
+
+install:
   - | #install R
-    echo $TRAVIS_OS_NAME
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      echo "linux install"
+
+    elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      echo "osx install"
+
+    elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      echo "windows install"
+
+    else
+      echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
+      exit 1
+
+    fi
+
+    echo $R_VERSION
 
