@@ -146,12 +146,13 @@ script:
     echo $(R --version)
 
     echo "building R package"
-    R CMD build ./
     echo "done building R package"
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      R CMD build ./
       R CMD INSTALL ./ --library=$R_LIBS --no-test-load
 
     elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      R CMD build ./ 
       R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
 
       ## Now fix the binaries, per SYNR-341:
@@ -172,7 +173,9 @@ script:
       done
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
+      echo "R CMD build ./" > build.bat
+      echo "R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch" >> build.bat
+      ./build.bat
 
     else
       echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
