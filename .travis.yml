@@ -133,7 +133,7 @@ script:
     echo "Building package"
 
     PACKAGE_NAME="PythonEmbedInR"
-    PACKAGE_VERSION=0.5.1000
+    PACKAGE_VERSION=0.0.0
     echo "R_LIBS $R_LIBS"
     echo $(R --version)
 
