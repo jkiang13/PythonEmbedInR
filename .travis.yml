@@ -1,3 +1,7 @@
+# travis R support is not great, it is not supported on windows and on mac it
+# installs from brew (slow) rather than a binary package. R from brew also
+# will not install from binary CRAN packages by default. so we instead use
+# a generic bash base and install packages ourselves.
 language: bash
 
 matrix:
@@ -32,5 +36,6 @@ matrix:
         R_VERSION: 4.0.2
 
 script:
-  - echo "matrix test $R_VERSION"
+  - | #install R
+    echo $TRAVIS_OS_NAME
 
