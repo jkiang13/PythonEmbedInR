@@ -45,6 +45,7 @@ rm ${PYTHON_ARCHIVE_NAME}.tgz
 EMBED_PYTHON_DIR=${PWD}
 cd ${PYTHON_ARCHIVE_NAME}
 
+COMPILER_FLAGS="-fPIC"
 if [ $(uname) == "Darwin" ]; then
   echo "Mac specific configuration"
   # When installing openssl on Mac there is a message:
@@ -55,6 +56,9 @@ if [ $(uname) == "Darwin" ]; then
 
   # sdk path needed for zlib on catalina
   export CPPFLAGS="-I/usr/local/opt/openssl/include -I$(xcrun --show-sdk-path)/usr/include"
+
+  # suppress these warnings so we don't exceed Travis' maximum log length
+  COMPILER_FLAGS="-Wno-nullability-completeness $COMPILER_FLAGS"
 
   # However the above isn't enough since the libraries have to be bundled into 
   # the package
@@ -86,7 +90,7 @@ fi
 
 # in the following line the '--prefix' parameter is the installation location
 # NOTE: removed --enable-shared option and added CFLAGS=-fPIC CXXFLAGS=-fPIC to try to get a static library
-./configure CFLAGS=-fPIC CXXFLAGS=-fPIC --prefix=${EMBED_PYTHON_DIR}
+./configure CFLAGS="$COMPILER_FLAGS" CXXFLAGS="$COMPILERS_FLAGS" --prefix=${EMBED_PYTHON_DIR}
 make
 make altinstall
 cd ..
