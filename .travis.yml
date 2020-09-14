@@ -188,5 +188,5 @@ script:
     echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
     echo "library(PythonEmbedInR)" >> runTests.R
 
-    R --vanilla < ../runTests.R
+    R --vanilla < runTests.R
 
