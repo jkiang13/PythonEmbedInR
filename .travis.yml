@@ -18,12 +18,12 @@ matrix:
         R_VERSION: 4.0.2
 
     - os: macosx
-      osx_image: xcode9.4
+      osx_image: xcode11.3
       env:
         R_VERSION: 3.6.3
 
     - os: macosx
-      osx_image: xcode9.4
+      osx_image: xxcode11.3
       env:
         R_VERSION: 4.0.2
 
@@ -148,6 +148,23 @@ script:
 
     elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
       R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
+
+      ## Now fix the binaries, per SYNR-341:
+      # it's v 3.0 or greater, with just one platform
+      mkdir -p ${PACKAGE_NAME}/libs
+      cp $R_LIBS/${PACKAGE_NAME}/libs/PythonEmbedInR.so ${PACKAGE_NAME}/libs
+      install_name_tool -change "/Library/Frameworks/R.framework/Versions/${R_VERSION}/Resources/lib/libR.dylib"  "/Library/Frameworks/R.framework/Versions/Current/Resources/lib/libR.dylib" ${PACKAGE_NAME}/libs/PythonEmbedInR.so
+      # update archive with modified binaries
+      for f in *.tgz
+      do
+        prefix="${f%.*}"
+        gunzip "$f"
+        # Note, >=3.0 there is only one platform
+        tar -rf "$prefix".tar ${PACKAGE_NAME}/libs/PythonEmbedInR.so
+        rm "$prefix".tar.gz
+        gzip "$prefix".tar
+        mv "$prefix".tar.gz "$prefix".tgz
+      done
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
       R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
