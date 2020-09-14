@@ -80,7 +80,6 @@ before_install:
       ./install_rtools.bat
 
       export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH 
-      export PATH=$PATH:$(echo "/${R_TOOLS_BIN}" | tr -d ":")
       choco install make
     fi
 
