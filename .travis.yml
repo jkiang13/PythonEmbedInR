@@ -37,6 +37,8 @@ matrix:
 
 before_install:
    - |
+    echo "Installing R $R_VERSION dependencies"
+
     R_MAJOR_VERSION=$(echo $R_VERSION | cut -f1 -d".")
 
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
@@ -72,7 +74,9 @@ before_install:
     fi
 
 install:
-  - | #install R
+  - |
+    echo "Installing R $R_VERSION"
+
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       PKG_VERSION=$(apt-cache madison r-base | grep $R_VERSION | head -1 | cut -f2 -d"|" | xargs)
       sudo apt-get install -y r-base=$PKG_VERSION
@@ -91,10 +95,8 @@ install:
       R_INSTALLER_URL="https://cloud.r-project.org/bin/windows/base/old/${R_VERSION}/${R_INSTALLER_FILE}"
       curl -O $R_INSTALLER_URL
 
-      echo "start /wait $R_INSTALLER_FILE /VERYSILENT" > "install_r.bat"
+      echo "start /wait $R_INSTALLER_FILE /VERYSILENT" > install_r.bat
       ./install_r.bat
-
-      echo "windows install"
 
     else
       echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
@@ -104,3 +106,6 @@ install:
 
     echo $R_VERSION
 
+script:
+  - |
+    R --version
