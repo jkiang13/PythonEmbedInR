@@ -86,11 +86,15 @@ install:
       PKG_VERSION=$(apt-cache madison r-base | grep $R_VERSION | head -1 | cut -f2 -d"|" | xargs)
       sudo apt-get install -y r-base=$PKG_VERSION
 
+      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
+
     elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
       R_INSTALLER_FILE="R-${R_VERSION}.pkg"
       R_INSTALLER_URL="https://cloud.r-project.org/bin/macosx/${R_INSTALLER_FILE}"
       curl -O $R_INSTALLER_URL
       sudo installer -pkg $R_INSTALLER_FILE -target /
+
+      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
       R_DIR="C:/R/R-${R_VERSION}"
@@ -104,11 +108,15 @@ install:
 
       export PATH=$(echo "/${R_DIR}" | tr -d ":")/bin:$PATH
 
+      R_LIBS=$(echo $TRAVIS_BUILD_DIR | sed 's/\\/\//g')/R_LIBS
+
     else
       echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
       exit 1
 
     fi
+
+    mkdir -p $R_LIBS
 
     # install our R package dependencies
     echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
@@ -121,25 +129,17 @@ script:
 
     PACKAGE_NAME="PythonEmbedInR"
     PACKAGE_VERSION=0.5.1000
-
+    echo "R_LIBS $R_LIBS"
 
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
-      mkdir -p $R_LIBS
-
       R CMD build ./
       R CMD INSTALL ./ --library=$R_LIBS --no-test-load
 
     elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
-      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
-      mkdir -p $R_LIBS
-
       R CMD build ./
       sudo R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      R_LIBS=$(echo $TRAVIS_BUILD_DIR | sed 's/\\/\//g')/R_LIBS
-      mkdir -p $R_LIBS
 
       R CMD build ./
       $R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
