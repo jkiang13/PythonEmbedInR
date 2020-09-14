@@ -75,7 +75,8 @@ before_install:
       echo "start /wait $R_TOOLS_FILE /VERYSILENT" > install_rtools.bat
       ./install_rtools.bat
 
-      export PATH=$PATH:$(echo "/${R_TOOLS_BIN}" | tr -d ":")
+      export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH 
+      #export PATH=$PATH:$(echo "/${R_TOOLS_BIN}" | tr -d ":")
     fi
 
 
@@ -143,7 +144,6 @@ script:
     PACKAGE_VERSION=0.0.0
 
     R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS 
-    R_LIBS_NATIVE=$(echo $R_LIBS | awk 'NR==1,/\/c\//{sub(/\/c\//, "c:/")} 1')
 
     echo "R_LIBS $R_LIBS"
     echo $(R --version)
@@ -176,6 +176,8 @@ script:
       done
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      R_LIBS_NATIVE=$(echo $R_LIBS | awk 'NR==1,/\/c\//{sub(/\/c\//, "c:/")} 1')
+
       echo "R CMD build ./" > build.bat
       echo "R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_NATIVE --no-test-load --merge-multiarch" >> build.bat
       ./build.bat
@@ -185,6 +187,8 @@ script:
       exit 1
 
     fi
+
+    R_LIBS_NATIVE=${R_LIBS_NATIVE:-$R_LIBS} 
 
     echo "Running tests"
     echo "$R_LIBS_NATIVE"
