@@ -135,6 +135,7 @@ script:
     PACKAGE_NAME="PythonEmbedInR"
     PACKAGE_VERSION=0.5.1000
     echo "R_LIBS $R_LIBS"
+    echo $(R --version)
 
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       R CMD build ./
@@ -147,7 +148,7 @@ script:
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
 
       R CMD build ./
-      $R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
+      R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
 
     else
       echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
