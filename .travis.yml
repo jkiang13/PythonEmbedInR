@@ -109,6 +109,7 @@ install:
 
       echo "start /wait $R_INSTALLER_FILE /VERYSILENT /DIR=$R_DIR" > install_r.bat
       echo "about to running R installer"
+      echo $(ls -l /c/cygwin/bin)
       ./install_r.bat
       echo "done with R installer"
 
