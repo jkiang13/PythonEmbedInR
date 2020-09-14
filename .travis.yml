@@ -66,7 +66,8 @@ before_install:
       fi
 
       curl -O "https://cran.r-project.org/bin/windows/Rtools/${R_TOOLS_FILE}"
-      cmd.exe /C "echo hello"
+      echo "wtf"
+      #cmd.exe /C "echo hello"
       #      cmd.exe /C "start /wait $R_TOOLS_FILE /VERYSILENT"
     fi
 
