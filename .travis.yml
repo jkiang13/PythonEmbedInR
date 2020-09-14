@@ -181,11 +181,14 @@ script:
     fi
 
     echo "Running tests"
-    echo ".libPaths(c('$R_LIBS', .libPaths()));" > runTests.R
+    echo ".libPaths(c('$R_LIBS_NATIVE', .libPaths()));" > runTests.R
     echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
     echo "source('testthat.R')" >> runTests.R
     echo "library(PythonEmbedInR);" >> runTests.R
     echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
     echo "library(PythonEmbedInR)" >> runTests.R
-    R --vanilla < runTests.R
+
+    mkdir test_wd
+    pushd test_wd
+    R --vanilla < ../runTests.R
 
