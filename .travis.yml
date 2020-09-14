@@ -119,7 +119,7 @@ install:
 
       # R won't understand a windows bash path of the form /c/foo
       # so convert to c:/foo
-      R_LIBS_NATIVE=$(awk 'NR==1,/\/c\//{sub(/\/c\//, "c:/")} 1')
+      R_LIBS_NATIVE=$(echo $R_LIBS | awk 'NR==1,/\/c\//{sub(/\/c\//, "c:/")} 1')
 
     else
       echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
