@@ -57,6 +57,9 @@ before_install:
       sudo apt-get update
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      echo $(which curl)
+      echo $(curl --version)
+
       # on windows we need to install the appropriate set of R tools
 
       if [ "$R_MAJOR_VERSION" == "4" ]; then
@@ -97,6 +100,8 @@ install:
       R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      echo $(which curl)
+      echo $(curl --version)
       R_DIR="C:/R/R-${R_VERSION}"
       R_INSTALLER_FILE="R-${R_VERSION}-win.exe"
       # conveniently even the current version is available under "old"
