@@ -184,6 +184,7 @@ script:
     fi
 
     echo "Running tests"
+    echo "$R_LIBS_NATIVE"
     echo ".libPaths(c('$R_LIBS_NATIVE', .libPaths()));" > runTests.R
     echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
     echo "source('testthat.R')" >> runTests.R
