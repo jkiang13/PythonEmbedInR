@@ -177,7 +177,7 @@ script:
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
       echo "R CMD build ./" > build.bat
-      echo "R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch" >> build.bat
+      echo "R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_NATIVE --no-test-load --merge-multiarch" >> build.bat
       ./build.bat
 
     else
@@ -191,8 +191,8 @@ script:
     echo ".libPaths(c('$R_LIBS_NATIVE', .libPaths()));" > runTests.R
     echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
     echo "source('testthat.R')" >> runTests.R
-    echo "library('PythonEmbedInR', lib.loc='$R_LIBS_NATIVE');" >> runTests.R
+    echo "library(PythonEmbedInR);" >> runTests.R
     echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
-    echo "library('PythonEmbedInR', lib.loc='$R_LIBS_NATIVE')" >> runTests.R
+    echo "library(PythonEmbedInR)" >> runTests.R
     R --vanilla < runTests.R
 
