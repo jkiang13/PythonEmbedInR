@@ -1,0 +1,19 @@
+language: bash
+
+env:
+  r_version=3.6.3
+  r_version=4.0.2
+
+matrix:
+  include:
+
+    - os: linux
+      dist: bionic
+
+    - os: macosx
+      osx_image: xcode9.4
+
+    - os: windows
+
+script:
+  - echo "matrix test"
