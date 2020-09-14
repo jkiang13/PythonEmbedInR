@@ -68,17 +68,20 @@ before_install:
       else
         R_TOOLS_FILE="Rtools35.exe"
         R_TOOLS_BIN="c:/Rtools/bin"
+
+        echo "start /wait $R_TOOLS_FILE /VERYSILENT" > install_rtools.bat
+        ./install_rtools.bat
+       
       fi
 
-      #curl -O "https://cran.r-project.org/bin/windows/Rtools/${R_TOOLS_FILE}"
+      curl -O "https://cran.r-project.org/bin/windows/Rtools/${R_TOOLS_FILE}"
 
       echo "start /wait $R_TOOLS_FILE /VERYSILENT" > install_rtools.bat
-      #./install_rtools.bat
+      ./install_rtools.bat
 
-      #export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH 
-      #export PATH=$PATH:$(echo "/${R_TOOLS_BIN}" | tr -d ":")
+      export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH 
+      export PATH=$PATH:$(echo "/${R_TOOLS_BIN}" | tr -d ":")
       choco install make
-      echo "choco"
     fi
 
 
