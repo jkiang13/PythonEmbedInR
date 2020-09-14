@@ -121,7 +121,7 @@ install:
     echo "R_LIBS is $R_LIBS"
     # install our R package dependencies
     echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
-    echo "if(length(list.of.packages)) install.packages(list.of.packages, $R_LIBS, repos='http://cran.fhcrc.org')" >> installReqPkgs.R
+    echo "if(length(list.of.packages)) install.packages(list.of.packages, lib=$R_LIBS, repos='http://cran.fhcrc.org')" >> installReqPkgs.R
     R --vanilla < installReqPkgs.R 
 
 script:
