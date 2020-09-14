@@ -75,6 +75,8 @@ before_install:
       export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH
     fi
 
+
+
 install:
   - |
     echo "Installing R $R_VERSION"
@@ -107,6 +109,11 @@ install:
       exit 1
 
     fi
+
+    # install our R package dependencies
+    echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
+    echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS}\")" >> installReqPkgs.R
+    R --vanilla < installReqPkgs.R 
 
 script:
   - |
