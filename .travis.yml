@@ -83,21 +83,19 @@ before_install:
 install:
   - |
     echo "Installing R $R_VERSION"
-    echo $PATH
+
+    R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
+    echo $R_LIBS
 
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       PKG_VERSION=$(apt-cache madison r-base | grep $R_VERSION | head -1 | cut -f2 -d"|" | xargs)
       sudo apt-get install -y r-base=$PKG_VERSION
-
-      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
 
     elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
       R_INSTALLER_FILE="R-${R_VERSION}.pkg"
       R_INSTALLER_URL="https://cloud.r-project.org/bin/macosx/${R_INSTALLER_FILE}"
       curl -O $R_INSTALLER_URL
       sudo installer -pkg $R_INSTALLER_FILE -target /
-
-      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
       echo $(which curl)
@@ -115,7 +113,7 @@ install:
 
       export PATH=$PATH:$(echo "/${R_DIR}" | tr -d ":")/bin
 
-      R_LIBS=$(echo $TRAVIS_BUILD_DIR | sed 's/\\/\//g')/R_LIBS
+      #R_LIBS=$(echo $TRAVIS_BUILD_DIR | sed 's/\\/\//g')/R_LIBS
 
       # R won't understand a windows bash path of the form /c/foo
       # so convert to c:/foo
@@ -129,6 +127,7 @@ install:
 
     mkdir -p $R_LIBS
     R_LIBS_NATIVE=${R_LIBS_NATIVE:-$R_LIBS}
+    echo "R_LIBS_NATIVE $R_LIBS_NATIVE"
 
     # install our R package dependencies
     echo "installing R dependencies"
@@ -142,6 +141,10 @@ script:
 
     PACKAGE_NAME="PythonEmbedInR"
     PACKAGE_VERSION=0.0.0
+
+    R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS 
+    R_LIBS_NATIVE=$(echo $R_LIBS | awk 'NR==1,/\/c\//{sub(/\/c\//, "c:/")} 1')
+
     echo "R_LIBS $R_LIBS"
     echo $(R --version)
 
