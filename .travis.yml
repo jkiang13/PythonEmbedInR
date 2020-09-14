@@ -66,9 +66,9 @@ before_install:
       fi
 
       curl -O "https://cran.r-project.org/bin/windows/Rtools/${R_TOOLS_FILE}"
-      echo "wtf2"
-      #cmd.exe /C "echo hello"
-      #      cmd.exe /C "start /wait $R_TOOLS_FILE /VERYSILENT"
+
+       echo "start /wait $R_TOOLS_FILE /VERYSILENT" > install_rtools.bat
+       ./install_rtools.bat
     fi
 
 install:
@@ -91,8 +91,8 @@ install:
       R_INSTALLER_URL="https://cloud.r-project.org/bin/windows/base/old/${R_VERSION}/${R_INSTALLER_FILE}"
       curl -O $R_INSTALLER_URL
 
-      echo "goodbye"
-      #cmd.exe /C "start /wait $R_INSTALLER_FILE /VERYSILENT"
+      echo "start /wait $R_INSTALLER_FILE /VERYSILENT" > "install_r.bat"
+      ./install_r.bat
 
       echo "windows install"
 
