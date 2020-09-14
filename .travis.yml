@@ -75,8 +75,6 @@ before_install:
       export PATH=$(echo "/${R_TOOLS_BIN}" | tr -d ":"):$PATH
     fi
 
-    echo $PATH
-
 install:
   - |
     echo "Installing R $R_VERSION"
@@ -110,11 +108,38 @@ install:
 
     fi
 
-    echo $R_VERSION
-    echo $PATH
-
-
 script:
   - |
-    echo $PATH
-    R --version
+    echo "Building package"
+
+    PACKAGE_NAME="PythonEmbedInR"
+    PACKAGE_VERSION=0.5.1000
+
+
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
+      mkdir -p $R_LIBS
+
+      R CMD build ./
+      R CMD INSTALL ./ --library=$R_LIBS --no-test-load
+
+    elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      R_LIBS=${TRAVIS_BUILD_DIR}/R_LIBS
+      mkdir -p $R_LIBS
+
+      R CMD build ./
+      sudo R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
+
+    elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      R_LIBS=$(echo $TRAVIS_BUILD_DIR | sed 's/\\/\//g')/R_LIBS
+      mkdir -p $R_LIBS
+
+      R CMD build ./
+      $R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
+
+    else
+      echo "Unknown TRAVIS_OS_NAME $TRAVIS_OS_NAME"
+      exit 1
+
+    fi
+
