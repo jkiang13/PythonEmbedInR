@@ -104,7 +104,9 @@ install:
       curl -O $R_INSTALLER_URL
 
       echo "start /wait $R_INSTALLER_FILE /VERYSILENT /DIR=$R_DIR" > install_r.bat
+      echo "about to running R installer"
       ./install_r.bat
+      echo "done with R installer"
 
       export PATH=$(echo "/${R_DIR}" | tr -d ":")/bin:$PATH
 
@@ -124,6 +126,7 @@ install:
     R_LIBS_NATIVE=${R_LIBS_NATIVE:-$R_LIBS}
 
     # install our R package dependencies
+    echo "installing R dependencies"
     echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
     echo "if(length(list.of.packages)) install.packages(list.of.packages, lib='$R_LIBS_NATIVE', repos='http://cran.fhcrc.org')" >> installReqPkgs.R
     R --vanilla < installReqPkgs.R 
@@ -137,17 +140,16 @@ script:
     echo "R_LIBS $R_LIBS"
     echo $(R --version)
 
+    echo "building R package"
+    R CMD build ./
+    echo "done building R package"
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-      R CMD build ./
       R CMD INSTALL ./ --library=$R_LIBS --no-test-load
 
     elif [ "$TRAVIS_OS_NAME" == "osx" ]; then
-      R CMD build ./
-      sudo R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
+      R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
 
     elif [ "$TRAVIS_OS_NAME" == "windows" ]; then
-
-      R CMD build ./
       R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
 
     else
