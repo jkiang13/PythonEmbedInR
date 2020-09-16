@@ -70,11 +70,21 @@ if [[ $label = $LINUX_LABEL_PREFIX* ]]; then
   CREATED_ARCHIVE=${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz
 
   if [ ! -f ${CREATED_ARCHIVE} ]; then
-  	echo "Linux artifact was not created"
-  	exit 1
+    echo "Linux artifact was not created"
+    exit 1
   fi  
 elif [[ $label = $MAC_LABEL_PREFIX* ]]; then
-  ## build the package, including the vignettes
+  # if we're using R versions installed from pkg installers
+  # then we need to switch version symlinks.
+  # note that we can only build one R package/version at a time
+  # per jenkins slave in this case.
+  R_FRAMEWORK_DIR="/Library/Frameworks/R.framework/Versions"
+  if [ -L "$R_FRAMEWORK_DIR/Current" ]; then
+    rm "$R_FRAMEWORK_DIR/Current"
+    ln -s "$R_FRAMEWORK_DIR/$RVERS" "$R_FRAMEWORK_DIR/Current"
+  fi
+
+  # build the package, including the vignettes
   # for some reason latex is not on the path.  So we add it.
   export PATH="$PATH:/usr/texbin"
   # make sure there are no stray .tar.gz files
