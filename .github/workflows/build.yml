@@ -25,6 +25,7 @@ jobs:
         run: |
           echo "install.packages(c('PythonEmbedInR', 'synapser'), repos=c('http://cran.fhcrc.org', 'http://ran.synapse.org'))" >> installPkgs.R
           echo "library(synapser)" >> installPkgs.R
+          echo "sessionInfo()" >> installPkgs.R
 
           R --vanilla < installPkgs.R
  
