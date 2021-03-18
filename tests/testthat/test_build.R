@@ -5,8 +5,7 @@ test_that("python version is 3.6.8", {
   expect_equal('3.6.8', pyGet('platform.python_version()'))
 })
 
-test_that("pip can be imported", {
-  pyImport('pip')
+test_that("ssl can be imported", {
   pyImport('ssl')
   expect_match(pyGet('ssl.OPENSSL_VERSION'), 'OpenSSL')
 })
