@@ -41,6 +41,11 @@ def addLocalSitePackageToPythonPath(root):
 
 
 def main(command, path):
+    """
+    Install pandas or remove for testing.
+    :param command: "install" or "uninstall"
+    :param path: the path prefix of the directory to install pandas into
+    """
 
     path = pkg_resources.normalize_path(path)
     moduleInstallationPrefix = os.path.join(path, 'inst')
@@ -50,12 +55,12 @@ def main(command, path):
     from pip_install import install as pip_install, remove as pip_remove
 
     if not os.path.exists(localSitePackages):
-      os.makedirs(localSitePackages)
+        os.makedirs(localSitePackages)
 
     if command == 'install':
-      pip_install(['pandas=={}'.format(PANDAS_VERSION)], localSitePackages)
+        pip_install('pandas=={}'.format(PANDAS_VERSION), localSitePackages)
     elif command == 'uninstall':
-      pip_remove('pandas', localSitePackages)
+        pip_remove('pandas', localSitePackages)
     else:
-      raise Exception("command not supported: "+command)
+        raise Exception("command not supported: " + command)
 

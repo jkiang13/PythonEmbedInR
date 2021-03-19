@@ -37,7 +37,16 @@ def _find_python_interpreter():
     return 'python{}'.format(sys.version_info.major)
 
 
-def install(packages, package_dir):
+PYTHON_INTERPRETER = _find_python_interpreter()
+
+
+def install(package, package_dir):
+    """
+    Programatically install a package via pip
+    :param package: the name of the python package to install via pip
+    :param package_dir: the directory to install the package into
+    """
+
     # the recommended way to call pip at runtime is by invoking a subprocess,
     # but that's complicated by the fact that we don't know where the python
     # interpreter is. usually you can do sys.executable but in the embedded
@@ -45,13 +54,20 @@ def install(packages, package_dir):
     # find the interpreter. this seems to work better here than calling main
     # on pip directly which doesn't work for some of these packages (separately
     # from the other issues above...)
-    for package in packages:
-        rc = subprocess.call([_find_python_interpreter(), "-m", "pip", "install", package, "--upgrade", "--quiet", "--target", package_dir])
-        if rc != 0:
-            raise Exception("pip.main returned {} when installing {}".format(rc, package))
+    rc = subprocess.call([PYTHON_INTERPRETER, "-m", "pip", "install", package, "--upgrade", "--quiet", "--target", package_dir])
+    if rc != 0:
+        raise Exception("pip returned {} when installing {}".format(rc, package))
 
 
 def remove(prefix, package_dir):
+    """
+    Remove a package installed via this script.
+    :param prefix: a package or package prefix
+    :param package_dir: the directory the package was installed into
+    """
+
+    # pip doesn't offer a way to uninstall from a specific target directory.
+    # instead we delete all traces matching the given prefix
     to_remove = glob.iglob(os.path.join(package_dir, prefix+"*"))
     for path in to_remove:
       if os.path.isdir(path):
