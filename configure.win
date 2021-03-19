@@ -52,7 +52,7 @@ install_python() {
   PIP_INSTALL_SCRIPT=get-pip.py
   curl -o $PIP_INSTALL_SCRIPT https://bootstrap.pypa.io/get-pip.py
   ./python.exe $PIP_INSTALL_SCRIPT
-  ./python.exe -m pip install --upgrade pip==21.0.1
+  ./python.exe -m pip install --upgrade pip==20.3.4
   cd ../..
 }
 
