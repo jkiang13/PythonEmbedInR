@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-18.04, macos-10.15, windows-2019]
-        r: [3.6.3, 4.0.3]
+        r: [3.6.3, 4.0.5, 4.1.0]
 
     steps:
       - name: checkout
@@ -102,7 +102,7 @@ jobs:
           INSTALLED=false
           PKG_VERSION=$(apt-cache madison r-base | grep $R_VERSION | head -1 | cut -f2 -d"|" | xargs)
           if [ -n "${PKG_VERSION}" ]; then
-            sudo apt-get -y install r-base=$PKG_VERSION
+            sudo apt-get -y install r-base=$PKG_VERSION r-recommended=$PKG_VERSION
             if [ $? -eq 0 ]; then
               INSTALLED=true
             fi
