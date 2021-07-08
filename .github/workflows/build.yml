@@ -103,7 +103,7 @@ jobs:
           INSTALLED=false
           PKG_VERSION=$(apt-cache madison r-base | grep $R_VERSION | head -1 | cut -f2 -d"|" | xargs)
           if [ -n "${PKG_VERSION}" ]; then
-            sudo apt-get -y install r-base=$PKG_VERSION r-recommended=$PKG_VERSION
+            sudo apt-get -y install r-recommended=$PKG_VERSION r-base-core=$PKG_VERSION r-base=$PKG_VERSION 
             if [ $? -eq 0 ]; then
               INSTALLED=true
             fi
