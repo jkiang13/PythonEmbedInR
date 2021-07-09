@@ -126,7 +126,13 @@ jobs:
         if: ${{runner.os == 'macOS'}}
         run: |
           R_INSTALLER_FILE="R-${R_VERSION}.pkg"
-          R_INSTALLER_URL="https://cloud.r-project.org/bin/macosx/${R_INSTALLER_FILE}"
+          R_INSTALLER_URL_BASE="https://cloud.r-project.org/bin/macosx/"
+          if [[ "$R_MAJOR_VERSION" == "4" ]]; then
+            # for some reason R4 pkgs are under a /base subdir
+            R_INSTALLER_URL_BASE="$R_INSTALLER_URL_BASE/base/"
+          fi
+
+          R_INSTALLER_URL="$R_INSTALLER_URL_BASE${R_INSTALLER_FILE}"
 
           wget $R_INSTALLER_URL
           sudo installer -pkg $R_INSTALLER_FILE -target /
