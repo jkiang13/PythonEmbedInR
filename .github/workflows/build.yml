@@ -23,7 +23,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     outputs:
-      package-version: ${{ steps.shared-env.package_version }}
+      package_version: ${{ steps.shared-env.package_version }}
 
     strategy:
       matrix:
@@ -42,6 +42,7 @@ jobs:
           r-version: ${{ matrix.r }}
 
       - name: shared-env
+        id: shared-env
         shell: bash
         run: |
           PACKAGE_NAME=PythonEmbedInR
@@ -206,7 +207,6 @@ jobs:
     if: github.event_name == 'release'
     outputs:
       s3_ran: ${{ steps.check_deployment_target.s3_ran }}
-      release_version: ${{ steps.check_deployment_target.release_version }} 
 
     steps:
       - name: check-deployment-target
