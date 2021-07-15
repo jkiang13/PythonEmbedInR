@@ -111,33 +111,6 @@ jobs:
             fi
           fi
 
-      - name: mac-lock
-        if: ${{runner.os == 'macOS'}}
-        run: |
-
-          # create a lock file we use to prevent any other jobs from running on our self-hosted
-          # mac runner. we need this because on MacOS you can only have one version of R installed
-          # at a time and the GitHub matrix syntax doesn't support limiting the number of jobs
-          # within a matrix on one runner.
-
-          GITHUB_LOCK_DIR="/tmp/github-build.lock"
-          echo GITHUB_LOCK_DIR=$GITHUB_LOCK_DIR >> $GITHUB_ENV
-
-          TIMEOUT=1200
-          SLEEP=10
-
-          until mkdir $GITHUB_LOCK_DIR
-          do
-            if [ $TIMEOUT -lt 1 ]; then
-              echo "ERROR: Timeout while waiting for exclusive lock on $GITHUB_LOCK_DIR"
-              exit 1
-            fi
-
-            sleep $SLEEP
-
-            ((TIMEOUT-=$SLEEP))
-          done
-
       - name: mac-env
         if: ${{runner.os == 'macOS'}}
         run: |
@@ -303,14 +276,6 @@ jobs:
           echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
           echo "library(PythonEmbedInR)" >> runTests.R
           $R --vanilla < runTests.R
-
-      - name: mac-unlock
-        shell: bash
-        if:  ${{always()}} 
-        run: |
-          # manually cleanup the lock we used to ensure only one mac run at a time
-          # on our self-hosted runner
-          rm -rf $GITHUB_LOCK_DIR
 
       - name: artifact-name
         shell: bash
