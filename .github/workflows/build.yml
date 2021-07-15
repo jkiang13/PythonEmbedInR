@@ -4,14 +4,19 @@
 name: build
 
 on:
-
-  # we build artifacts on every push and release.
-  # on release events we additionally upload the artifacts to our RAN server
-
   push:
+    # we build/test all pushed branches, but not tags.
+    # we only push tags with releases, and we handle releases explicitly
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+
+  pull_request:
+
   release:
     types:
-      - published
+      - 'published'
 
 jobs:
   build:
