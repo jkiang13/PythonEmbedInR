@@ -132,8 +132,8 @@ jobs:
           # in order to support older versions of MacOS (mojave) which aren't supported
           # by GitHub. instead of installing R we swap between existing versions.
 
-          rm /Library/Frameworks/R.framework/Version/Current
-          ln -s /Library/Frameworks/R.framework/Version/$R_MINOR_VERSION /Library/Frameworks/R.framework/Version/Current
+          rm -rf /Library/Frameworks/R.framework/Versions/Current
+          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
 
           #R_INSTALLER_URL_BASE="https://cloud.r-project.org/bin/macosx/"
           #if [[ "$R_MAJOR_VERSION" == "4" ]]; then
