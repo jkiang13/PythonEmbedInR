@@ -135,7 +135,7 @@ jobs:
 
           R_INSTALLER_URL="$R_INSTALLER_URL_BASE${R_INSTALLER_FILE}"
 
-          wget $R_INSTALLER_URL
+          curl -O $R_INSTALLER_URL
           sudo installer -pkg $R_INSTALLER_FILE -target /
 
       - name: windows-env
