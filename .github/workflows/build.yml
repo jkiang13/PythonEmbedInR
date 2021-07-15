@@ -54,5 +54,6 @@ jobs:
           echo "try(remove.packages('$PACKAGE'), silent=T)" >> test.R
           echo "install.packages('$PACKAGE', repos=c('$RAN', 'http://cran.fhcrc.org'))" >> test.R
           echo "library('$PACKAGE')" >> test.R
+          R --vanilla < test.R
 
 
