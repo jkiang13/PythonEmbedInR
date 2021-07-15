@@ -251,15 +251,15 @@ jobs:
       - name: mac-build-package
         if: ${{runner.os == 'macOS'}}
         run: |
-#            # need some additional headers (zlib) on catalina to compile python
-#            # https://stackoverflow.com/a/58349403
-#            for HEADER_PATH in /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/*
-#            do
-#              INCLUDE_PATH="/usr/local/include/$(basename $HEADER_PATH)"
-#              if [ ! -f $INCLUDE_PATH ]; then
-#                sudo ln -s $HEADER_PATH $INCLUDE_PATH 
-#              fi
-#            done
+            #  # need some additional headers (zlib) on catalina to compile python
+            #  # https://stackoverflow.com/a/58349403
+            #  for HEADER_PATH in /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/*
+            #  do
+            #    INCLUDE_PATH="/usr/local/include/$(basename $HEADER_PATH)"
+            #    if [ ! -f $INCLUDE_PATH ]; then
+            #      sudo ln -s $HEADER_PATH $INCLUDE_PATH 
+            #    fi
+            #  done
 
             R CMD build ./
 
