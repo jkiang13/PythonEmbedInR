@@ -215,7 +215,7 @@ jobs:
         id: check-version
         shell: bash
         run: |
-          echo "job output is ${{ build.outputs.package_version }}"
+          echo "job output is ${{ needs.build.outputs.package_version }}"
 
   deploy:
     runs-on: ubuntu-18.04
