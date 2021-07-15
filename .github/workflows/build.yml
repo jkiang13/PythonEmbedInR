@@ -39,14 +39,6 @@ jobs:
         with:
           r-version: ${{ matrix.r }}
 
-      - name: setup-r-mac-mojave
-        if: ${{matrix.os == 'macos-mojave'}}
-        run: |
-          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
-          rm -rf /Library/Frameworks/R.framework/Versions/Current
-          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
-          echo "R=R" >> $GITHUB_ENV
-
       - name: shared-env
         shell: bash
         run: |
@@ -92,6 +84,18 @@ jobs:
           R_LIBS_USER_SANITIZED=$(echo $R_LIBS_USER | sed 's/\\/\//g')
           echo "R_LIBS_USER=$R_LIBS_USER_SANITIZED" >> $GITHUB_ENV
 
+      - name: setup-r-mac-mojave
+        if: ${{matrix.os == 'macos-mojave'}}
+        run: |
+          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
+          rm -rf /Library/Frameworks/R.framework/Versions/Current
+          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+
+          R_LIBS_USER=${GITHUB_WORKSPACE}/R_LIBS
+          mkdir -p $R_LIBS_USER
+          echo "R_LIBS_USER=$R_LIBS_USER" >> $GITHUB_ENV
+
+          echo "R=R" >> $GITHUB_ENV
 
       - name: install-R-lib-deps
         shell: bash
