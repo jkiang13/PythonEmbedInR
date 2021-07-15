@@ -118,7 +118,7 @@ jobs:
           R_LIBS=${GITHUB_WORKSPACE}/R_LIBS
           mkdir -p $R_LIBS
           echo "R_LIBS=$R_LIBS" >> $GITHUB_ENV
-          echo "R=R" >> $GITHUB_ENV
+          #          echo "R=R" >> $GITHUB_ENV
 
           #          # downgrade gettext for better binary compatibility with older MacOS version (libintl.8.dylib)
           #          brew unlink gettext
@@ -128,17 +128,23 @@ jobs:
       - name: mac-install-R
         if: ${{runner.os == 'macOS'}}
         run: |
-          R_INSTALLER_FILE="R-${R_VERSION}.pkg"
-          R_INSTALLER_URL_BASE="https://cloud.r-project.org/bin/macosx/"
-          if [[ "$R_MAJOR_VERSION" == "4" ]]; then
-            # for some reason R4 pkgs are under a /base subdir
-            R_INSTALLER_URL_BASE="$R_INSTALLER_URL_BASE/base/"
-          fi
+          # on macos we use a self-hosted runner with pre-installed versions of R
+          # in order to support older versions of MacOS (mojave) which aren't supported
+          # by GitHub. instead of installing R we swap between existing versions.
 
-          R_INSTALLER_URL="$R_INSTALLER_URL_BASE${R_INSTALLER_FILE}"
+          rm /Library/Frameworks/R.framework/Version/Current
+          ln -s /Library/Frameworks/R.framework/Version/$R_MINOR_VERSION /Library/Frameworks/R.framework/Version/Current
 
-          curl -O $R_INSTALLER_URL
-          sudo installer -pkg $R_INSTALLER_FILE -target /
+          #R_INSTALLER_URL_BASE="https://cloud.r-project.org/bin/macosx/"
+          #if [[ "$R_MAJOR_VERSION" == "4" ]]; then
+          #  # for some reason R4 pkgs are under a /base subdir
+          #  R_INSTALLER_URL_BASE="$R_INSTALLER_URL_BASE/base/"
+          #fi
+
+          #R_INSTALLER_URL="$R_INSTALLER_URL_BASE${R_INSTALLER_FILE}"
+
+          #curl -O $R_INSTALLER_URL
+          #sudo installer -pkg $R_INSTALLER_FILE -target /
 
       - name: windows-env
         if: ${{runner.os == 'Windows'}}
@@ -230,7 +236,7 @@ jobs:
             
             R CMD build ./
 
-            sudo R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
+            R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
 
             ## Now fix the binaries, per SYNR-341:
             # it's v 3.0 or greater, with just one platform
