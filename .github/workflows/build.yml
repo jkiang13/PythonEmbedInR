@@ -206,7 +206,7 @@ jobs:
     needs: build
     if: github.event_name == 'release'
     outputs:
-      s3_ran: ${{ steps.check-deployment-target.s3_ran }}
+      s3_ran: ${{ steps.deploy-to-target.s3_ran }}
 
     steps:
       - name: check-deployment-target
@@ -239,6 +239,7 @@ jobs:
           path: deploy_artifacts
 
       - name: deploy-to-target
+        id: deploy-to-target
         if: ${{steps.check-deployment-target.outputs.deploy_target != ''}}
         shell: bash
         run: |
@@ -292,8 +293,8 @@ jobs:
       - name: check-install
         shell: bash
         run: |
-          RAN="http://"${{ needs.deploy.outputs.s3_ran }}
-          VERSION_TO_CHECK=${{ needs.build.outputs.package_version }}
+          RAN="http://${{ needs.deploy.outputs.s3_ran }}"
+          VERSION_TO_CHECK="${{ needs.build.outputs.package_version }}"
           PACKAGE="PythonEmbedInR"
           echo "if (available.packages(repos='$RAN')['$PACKAGE','Version'] != '$VERSION_TO_CHECK') { quit(save = 'no', status = 1) }" > test.R
           echo "try(remove.packages('$PACKAGE'), silent=T)" >> test.R
