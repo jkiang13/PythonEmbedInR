@@ -260,7 +260,7 @@ jobs:
 #                sudo ln -s $HEADER_PATH $INCLUDE_PATH 
 #              fi
 #            done
-            
+
             R CMD build ./
 
             R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
