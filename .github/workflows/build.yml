@@ -128,7 +128,7 @@ jobs:
 
           while [ ! $(mkdir /tmp/$GITHUB_LOCK_DIR) ];
           do
-            if [ "$TIMEOUT" -lte 0 ]; then
+            if [ $TIMEOUT -lt 1 ]; then
               echo "ERROR: Timeout while waiting for exclusive lock on $GITHUB_LOCK_DIR"
               exit 1
             fi
@@ -307,7 +307,7 @@ jobs:
 
       - name: mac-unlock
         shell: bash
-        if:  ${{always() && runner.os == 'macOS'}} 
+        if:  ${{always()}} 
         run: |
           # manually cleanup the lock we used to ensure only one mac run at a time
           # on our self-hosted runner
