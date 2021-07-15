@@ -123,10 +123,10 @@ jobs:
           GITHUB_LOCK_DIR="/tmp/github-build.lock"
           echo GITHUB_LOCK_DIR=$GITHUB_LOCK_DIR >> $GITHUB_ENV
 
-          TIMEOUT=120
+          TIMEOUT=1200
           SLEEP=10
 
-          while [ ! $(mkdir $GITHUB_LOCK_DIR) ];
+          until mkdir $GITHUB_LOCK_DIR
           do
             if [ $TIMEOUT -lt 1 ]; then
               echo "ERROR: Timeout while waiting for exclusive lock on $GITHUB_LOCK_DIR"
@@ -135,7 +135,6 @@ jobs:
 
             sleep $SLEEP
 
-            # Decrease the timeout of one
             ((TIMEOUT-=$SLEEP))
           done
 
