@@ -71,12 +71,6 @@ jobs:
           echo "R_MAJOR_VERSION=$R_MAJOR_VERSION" >> $GITHUB_ENV
           echo "R_MINOR_VERSION=$R_MINOR_VERSION" >> $GITHUB_ENV
 
-          # replace backslashes with forward slashes to unify path expectations
-          # (bash on windows will work fine with forward slashes)
-          R_LIBS=$(echo $GITHUB_WORKSPACE | sed 's/\\/\//g')/R_LIBS
-          mkdir -p $R_LIBS
-          echo "R_LIBS=$R_LIBS" >> $GITHUB_ENV
-
       - uses: actions/checkout@master
       - name: Setup R
         uses: r-lib/actions/setup-r@v1
@@ -87,14 +81,14 @@ jobs:
         shell: bash
         run: |
           echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
-          echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS}\")" >> installReqPkgs.R
+          echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS_USER}\")" >> installReqPkgs.R
           R --vanilla < installReqPkgs.R
 
       - name: linux-build-package
         if: ${{runner.os == 'Linux'}}
         run: |
           R CMD build ./
-          R CMD INSTALL ./ --library=$R_LIBS --no-test-load
+          R CMD INSTALL ./ --library=$R_LIBS_USER --no-test-load
 
           echo "ARTIFACT_EXTENSION=tar.gz" >> $GITHUB_ENV
 
@@ -113,12 +107,12 @@ jobs:
 
             R CMD build ./
 
-            R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load
+            R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_USER --no-test-load
 
             ## Now fix the binaries, per SYNR-341:
             # it's v 3.0 or greater, with just one platform
             mkdir -p ${PACKAGE_NAME}/libs
-            cp $R_LIBS/${PACKAGE_NAME}/libs/PythonEmbedInR.so ${PACKAGE_NAME}/libs
+            cp $R_LIBS_USER/${PACKAGE_NAME}/libs/PythonEmbedInR.so ${PACKAGE_NAME}/libs
             install_name_tool -change "/Library/Frameworks/R.framework/Versions/${R_MINOR_VERSION}/Resources/lib/libR.dylib"  "/Library/Frameworks/R.framework/Versions/Current/Resources/lib/libR.dylib" ${PACKAGE_NAME}/libs/PythonEmbedInR.so
 
             # update archive with modified binaries
@@ -140,14 +134,14 @@ jobs:
         shell: bash
         run: |
           R CMD build ./
-          R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
+          R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_USER --no-test-load --merge-multiarch
 
           echo "ARTIFACT_EXTENSION=zip" >> $GITHUB_ENV
 
       - name: run-tests
         shell: bash
         run: |
-          echo ".libPaths(c('$R_LIBS', .libPaths()));" > runTests.R
+          echo ".libPaths(c('$R_LIBS_USER', .libPaths()));" > runTests.R
           echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
           echo "source('testthat.R')" >> runTests.R
           echo "library(PythonEmbedInR);" >> runTests.R
