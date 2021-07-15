@@ -82,13 +82,13 @@ jobs:
         run: |
           echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
           echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS}\")" >> installReqPkgs.R
-          $R --vanilla < installReqPkgs.R
+          R --vanilla < installReqPkgs.R
 
       - name: linux-build-package
         if: ${{runner.os == 'Linux'}}
         run: |
-          $R CMD build ./
-          $R CMD INSTALL ./ --library=$R_LIBS --no-test-load
+          R CMD build ./
+          R CMD INSTALL ./ --library=$R_LIBS --no-test-load
 
           echo "ARTIFACT_EXTENSION=tar.gz" >> $GITHUB_ENV
 
@@ -133,8 +133,8 @@ jobs:
         if: ${{runner.os == 'Windows'}}
         shell: bash
         run: |
-          $R CMD build ./
-          $R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
+          R CMD build ./
+          R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS --no-test-load --merge-multiarch
 
           echo "ARTIFACT_EXTENSION=zip" >> $GITHUB_ENV
 
@@ -147,7 +147,7 @@ jobs:
           echo "library(PythonEmbedInR);" >> runTests.R
           echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
           echo "library(PythonEmbedInR)" >> runTests.R
-          $R --vanilla < runTests.R
+          R --vanilla < runTests.R
 
       - name: artifact-name
         shell: bash
