@@ -104,7 +104,8 @@ jobs:
           echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
           echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS_USER}\")" >> installReqPkgs.R
           R --vanilla < installReqPkgs.R
-       - uses: actions/checkout@master
+
+      - uses: actions/checkout@master
       - name: setup-r
         if: ${{matrix.os != 'macos-mojave'}} 
         uses: r-lib/actions/setup-r@v1
