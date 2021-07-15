@@ -46,6 +46,7 @@ jobs:
           ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
 
       - name: check-install
+        shell: bash
         run: |
           RAN=https://staging-ran.synapse.org
           VERSION_TO_CHECK=0.11
