@@ -259,16 +259,16 @@ jobs:
 
           echo "ARTIFACT_EXTENSION=zip" >> $GITHUB_ENV
 
-      - name: run-tests
-        shell: bash
-        run: |
-          echo ".libPaths(c('$R_LIBS', .libPaths()));" > runTests.R
-          echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
-          echo "source('testthat.R')" >> runTests.R
-          echo "library(PythonEmbedInR);" >> runTests.R
-          echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
-          echo "library(PythonEmbedInR)" >> runTests.R
-          $R --vanilla < runTests.R
+#      - name: run-tests
+#        shell: bash
+#        run: |
+#          echo ".libPaths(c('$R_LIBS', .libPaths()));" > runTests.R
+#          echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
+#          echo "source('testthat.R')" >> runTests.R
+#          echo "library(PythonEmbedInR);" >> runTests.R
+#          echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
+#          echo "library(PythonEmbedInR)" >> runTests.R
+#          $R --vanilla < runTests.R
 
       - name: artifact-name
         shell: bash
