@@ -206,7 +206,7 @@ jobs:
     needs: build
     if: github.event_name == 'release'
     outputs:
-      s3_ran: ${{ steps.check_deployment_target.s3_ran }}
+      s3_ran: ${{ steps.check-deployment-target.s3_ran }}
 
     steps:
       - name: check-deployment-target
@@ -264,7 +264,8 @@ jobs:
 
   # on each of our matrix platforms, download the newly uploaded package from RAN
   check-deploy:
-    needs: deploy
+    needs:
+      [build, deploy]
 
     strategy:
       matrix:
