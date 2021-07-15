@@ -22,7 +22,7 @@ jobs:
       matrix:
         os: [windows-2019, macos-10.14]
         #os: [ubuntu-18.04, macos-10.15, windows-2019]
-        r: [4.0.5] 
+        r: [4.0.5, 4.1.0] 
         #r: [3.6.3, 4.0.5, 4.1.0]
 
     steps:
