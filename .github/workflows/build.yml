@@ -126,7 +126,7 @@ jobs:
           TIMEOUT=120
           SLEEP=10
 
-          while [ ! $(mkdir /tmp/$GITHUB_LOCK_DIR) ];
+          while [ ! $(mkdir $GITHUB_LOCK_DIR) ];
           do
             if [ $TIMEOUT -lt 1 ]; then
               echo "ERROR: Timeout while waiting for exclusive lock on $GITHUB_LOCK_DIR"
