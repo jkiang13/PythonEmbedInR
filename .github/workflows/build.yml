@@ -22,6 +22,8 @@ jobs:
   build:
 
     runs-on: ${{ matrix.os }}
+    outputs:
+      package-version: ${{ steps.shared-env.package_version }}
 
     strategy:
       matrix:
@@ -51,7 +53,7 @@ jobs:
           # looks like semver then we use that for the package version.
           RELEASE_TAG=${{ github.event.release.tag_name }}
           if [[ $RELEASE_TAG =~ ^v?([[:digit:]\.]+)(-rc)? ]]; then
-            RELEASE_VERSION="${BASH_REMATCH[1]}"
+            RELEASE_VERSION="${BASH_REMATCH[1]}.$GITHUB_RUN_NUMBER"
 
             # a release version overrides the package version
             # for purposes of creating artifacts
@@ -83,6 +85,8 @@ jobs:
           # makes it easier to unify the path handling.
           R_LIBS_USER_SANITIZED=$(echo $R_LIBS_USER | sed 's/\\/\//g')
           echo "R_LIBS_USER=$R_LIBS_USER_SANITIZED" >> $GITHUB_ENV
+
+          echo "::set-output name=package_version::$PACKAGE_VERSION"
 
       - name: setup-r-mac-mojave
         if: ${{matrix.os == 'macos-mojave'}}
@@ -105,71 +109,6 @@ jobs:
           echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS_USER}\")" >> installReqPkgs.R
           R --vanilla < installReqPkgs.R
 
-      - uses: actions/checkout@master
-      - name: setup-r
-        if: ${{matrix.os != 'macos-mojave'}} 
-        uses: r-lib/actions/setup-r@v1
-        with:
-          r-version: ${{ matrix.r }}
-
-      - name: shared-env
-        shell: bash
-        run: |
-          PACKAGE_NAME=PythonEmbedInR
-          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
-
-          PACKAGE_VERSION=$(grep "Version: " DESCRIPTION | awk '{print $2'})
-
-          # if this was triggered by a release and the release tag
-          # looks like semver then we use that for the package version.
-          RELEASE_TAG=${{ github.event.release.tag_name }}
-          if [[ $RELEASE_TAG =~ ^v?([[:digit:]\.]+)(-rc)? ]]; then
-            RELEASE_VERSION="${BASH_REMATCH[1]}"
-
-            # a release version overrides the package version
-            # for purposes of creating artifacts
-            PACKAGE_VERSION=$RELEASE_VERSION
-
-            DATE=`date +%Y-%m-%d`
-            # replace DESCRIPTION with $VERSION & $DATE
-            # sed -i not portable on OSX so we wash through some temp files instead
-            sed "s|^Version: .*$|Version: $PACKAGE_VERSION|g" DESCRIPTION > DESCRIPTION.temp
-            sed "s|^Date: .*$|Date: $DATE|g" DESCRIPTION.temp > DESCRIPTION2.temp
-
-            rm DESCRIPTION
-            mv DESCRIPTION2.temp DESCRIPTION
-            rm DESCRIPTION.temp
-          fi
-
-          echo "BRANCH_VERSION=$BRANCH_VERSION" >> $GITHUB_ENV
-          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-
-          R_VERSION=${{matrix.r}}
-          R_MAJOR_VERSION=$(echo $R_VERSION | cut -f1 -d".")
-          R_MINOR_VERSION=$R_MAJOR_VERSION.$(echo $R_VERSION | cut -f2 -d".")
-          echo "R_VERSION=$R_VERSION" >> $GITHUB_ENV
-          echo "R_MAJOR_VERSION=$R_MAJOR_VERSION" >> $GITHUB_ENV
-          echo "R_MINOR_VERSION=$R_MINOR_VERSION" >> $GITHUB_ENV
-
-          # replace backslashes with forward slashes for windows.
-          # windows bash will handle forward slashes fine and this
-          # makes it easier to unify the path handling.
-          R_LIBS_USER_SANITIZED=$(echo $R_LIBS_USER | sed 's/\\/\//g')
-          echo "R_LIBS_USER=$R_LIBS_USER_SANITIZED" >> $GITHUB_ENV
-
-      - name: setup-r-mac-mojave
-        if: ${{matrix.os == 'macos-mojave'}}
-        run: |
-          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
-          rm -rf /Library/Frameworks/R.framework/Versions/Current
-          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
-
-          R_LIBS_USER=${GITHUB_WORKSPACE}/R_LIBS
-          mkdir -p $R_LIBS_USER
-          echo "R_LIBS_USER=$R_LIBS_USER" >> $GITHUB_ENV
-
-          echo "R=R" >> $GITHUB_ENV
- 
       - name: linux-build-package
         if: ${{runner.os == 'Linux'}}
         run: |
@@ -292,7 +231,6 @@ jobs:
 
           echo "DEPLOY_TARGET=$DEPLOY_TARGET" >> $GITHUB_ENV
           echo "::set-output name=deploy_target::$DEPLOY_TARGET"
-          echo "::set-output name=release_version::$RELEASE_VERSION" 
 
       - name: download-artifacts
         uses: actions/download-artifact@v2
@@ -354,7 +292,7 @@ jobs:
       - name: check-install
         run: |
           RAN=${{ needs.deploy.outputs.s3_ran }}
-          VERSION_TO_CHECK=${{ needs.deploy.outputs.RELEASE_VERSION }} 
+          VERSION_TO_CHECK=${{ needs.build.outputs.package_version}} 
           PACKAGE=PythonEmbedInR
           echo "if (available.packages(repos='$RAN')['$PACKAGE','Version'] != '$VERSION_TO_CHECK') { quit(save = 'no', status = 1) }" > test.R
           echo "try(remove.packages('$PACKAGE'), silent=T)" >> test.R
