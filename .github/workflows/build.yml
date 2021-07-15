@@ -48,7 +48,7 @@ jobs:
       - name: check-install
         shell: bash
         run: |
-          RAN=https://staging-ran.synapse.org
+          RAN=http://staging-ran.synapse.org
           VERSION_TO_CHECK=0.11
           PACKAGE=PythonEmbedInR
           echo "if (available.packages(repos='$RAN')['$PACKAGE','Version'] != '$VERSION_TO_CHECK') { quit(save = 'no', status = 1) }" > test.R
