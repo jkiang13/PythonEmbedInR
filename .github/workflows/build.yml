@@ -45,6 +45,7 @@ jobs:
           # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
           rm -rf /Library/Frameworks/R.framework/Versions/Current
           ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+          echo "R=R" >> $GITHUB_ENV
 
       - name: shared-env
         shell: bash
