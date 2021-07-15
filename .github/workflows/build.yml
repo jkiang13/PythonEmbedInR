@@ -118,7 +118,7 @@ jobs:
           R_LIBS=${GITHUB_WORKSPACE}/R_LIBS
           mkdir -p $R_LIBS
           echo "R_LIBS=$R_LIBS" >> $GITHUB_ENV
-          #          echo "R=R" >> $GITHUB_ENV
+          echo "R=R" >> $GITHUB_ENV
 
           #          # downgrade gettext for better binary compatibility with older MacOS version (libintl.8.dylib)
           #          brew unlink gettext
