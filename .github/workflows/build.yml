@@ -89,6 +89,13 @@ jobs:
 
           echo "::set-output name=package_version::$PACKAGE_VERSION"
 
+      - name: version-check
+        shell: bash
+        run: |
+          echo "version is ${{ steps.shared-env.outputs.package_version }}"
+
+ 
+
       - name: setup-r-mac-mojave
         if: ${{matrix.os == 'macos-mojave'}}
         run: |
