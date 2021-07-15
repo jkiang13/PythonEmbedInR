@@ -94,119 +94,128 @@ jobs:
         run: |
           echo "version is ${{ steps.shared-env.outputs.package_version }}"
 
- 
+          #      - name: setup-r-mac-mojave
+          #        if: ${{matrix.os == 'macos-mojave'}}
+          #        run: |
+          #          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
+          #          rm -rf /Library/Frameworks/R.framework/Versions/Current
+          #          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+          #
+          #          R_LIBS_USER=${GITHUB_WORKSPACE}/R_LIBS
+          #          rm -rf R_LIBS_USER
+          #          mkdir -p $R_LIBS_USER
+          #          echo "R_LIBS_USER=$R_LIBS_USER" >> $GITHUB_ENV
+          #
+          #          echo "R=R" >> $GITHUB_ENV
+          #
+          #      - name: install-R-lib-deps
+          #        shell: bash
+          #        run: |
+          #          echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
+          #          echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS_USER}\")" >> installReqPkgs.R
+          #          R --vanilla < installReqPkgs.R
+          #
+          #      - name: linux-build-package
+          #        if: ${{runner.os == 'Linux'}}
+          #        run: |
+          #          R CMD build ./
+          #          R CMD INSTALL ./ --library=$R_LIBS_USER --no-test-load
+          #
+          #          echo "ARTIFACT_EXTENSION=tar.gz" >> $GITHUB_ENV
+          #
+          #      - name: mac-build-package
+          #        if: ${{runner.os == 'macOS'}}
+          #        run: |
+          #            #  # need some additional headers (zlib) on catalina to compile python
+          #            #  # https://stackoverflow.com/a/58349403
+          #            #  for HEADER_PATH in /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/*
+          #            #  do
+          #            #    INCLUDE_PATH="/usr/local/include/$(basename $HEADER_PATH)"
+          #            #    if [ ! -f $INCLUDE_PATH ]; then
+          #            #      sudo ln -s $HEADER_PATH $INCLUDE_PATH 
+          #            #    fi
+          #            #  done
+          #
+          #            R CMD build ./
+          #
+          #            R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_USER --no-test-load
+          #
+          #            ## Now fix the binaries, per SYNR-341:
+          #            # it's v 3.0 or greater, with just one platform
+          #            mkdir -p ${PACKAGE_NAME}/libs
+          #            cp $R_LIBS_USER/${PACKAGE_NAME}/libs/PythonEmbedInR.so ${PACKAGE_NAME}/libs
+          #            install_name_tool -change "/Library/Frameworks/R.framework/Versions/${R_MINOR_VERSION}/Resources/lib/libR.dylib"  "/Library/Frameworks/R.framework/Versions/Current/Resources/lib/libR.dylib" ${PACKAGE_NAME}/libs/PythonEmbedInR.so
+          #
+          #            # update archive with modified binaries
+          #            for f in *.tgz
+          #            do
+          #              prefix="${f%.*}"
+          #              gunzip "$f"
+          #              # Note, >=3.0 there is only one platform
+          #              tar -rf "$prefix".tar ${PACKAGE_NAME}/libs/PythonEmbedInR.so
+          #              rm "$prefix".tar.gz
+          #              gzip "$prefix".tar
+          #              mv "$prefix".tar.gz "$prefix".tgz
+          #            done
+          #
+          #            echo "ARTIFACT_EXTENSION=tgz" >> $GITHUB_ENV
+          #
+          #      - name: windows-build-package
+          #        if: ${{runner.os == 'Windows'}}
+          #        shell: bash
+          #        run: |
+          #          R CMD build ./
+          #          R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_USER --no-test-load --merge-multiarch
+          #
+          #          echo "ARTIFACT_EXTENSION=zip" >> $GITHUB_ENV
+          #
+          #      - name: run-tests
+          #        shell: bash
+          #        run: |
+          #          echo ".libPaths(c('$R_LIBS_USER', .libPaths()));" > runTests.R
+          #          echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
+          #          echo "source('testthat.R')" >> runTests.R
+          #          echo "library(PythonEmbedInR);" >> runTests.R
+          #          echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
+          #          echo "library(PythonEmbedInR)" >> runTests.R
+          #          R --vanilla < runTests.R
+          #
+          #      - name: artifact-name
+          #        shell: bash
+          #        run: |
+          #          # we format our artifact names so we align to the same pattern
+          #          # used by the deploy gist written to work with jenkins.
+          #
+          #          ARTIFACT_NAME="${PACKAGE_NAME}_${PACKAGE_VERSION}.${ARTIFACT_EXTENSION}"
+          #
+          #          OS_LABEL=$(echo ${{runner.os}} | tr '[:upper:]' '[:lower:]')
+          #          if [[ "$OS_LABEL" == "macos" ]]; then
+          #            OS_LABEL="mac"
+          #          fi
+          #
+          #          # only the first two parts of the version here, e.g. 3.6
+          #          RVERS=$(echo $R_VERSION | awk -F"." '{print $1"."$2}')
+          #
+          #          UPLOAD_NAME="label=${OS_LABEL}-RVERS-${RVERS}"
+          #          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+          #          echo "UPLOAD_NAME=$UPLOAD_NAME" >> $GITHUB_ENV
+          #
+          #      - name: upload-artifact
+          #        uses: actions/upload-artifact@v2
+          #        with:
+          #          name: ${{env.UPLOAD_NAME}}
+          #          path: ${{env.ARTIFACT_NAME}}
 
-      - name: setup-r-mac-mojave
-        if: ${{matrix.os == 'macos-mojave'}}
-        run: |
-          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
-          rm -rf /Library/Frameworks/R.framework/Versions/Current
-          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+  version-check:
+    runs-on: ubuntu-18.04
+    needs: build
 
-          R_LIBS_USER=${GITHUB_WORKSPACE}/R_LIBS
-          rm -rf R_LIBS_USER
-          mkdir -p $R_LIBS_USER
-          echo "R_LIBS_USER=$R_LIBS_USER" >> $GITHUB_ENV
-
-          echo "R=R" >> $GITHUB_ENV
-
-      - name: install-R-lib-deps
+    steps:
+      - name: check-version
+        id: check-version
         shell: bash
         run: |
-          echo "list.of.packages <- c('pack', 'R6', 'testthat', 'rjson', 'rlang');" >> installReqPkgs.R
-          echo "if(length(list.of.packages)) install.packages(list.of.packages, repos='http://cran.fhcrc.org', destdir=\"${R_LIBS_USER}\")" >> installReqPkgs.R
-          R --vanilla < installReqPkgs.R
-
-      - name: linux-build-package
-        if: ${{runner.os == 'Linux'}}
-        run: |
-          R CMD build ./
-          R CMD INSTALL ./ --library=$R_LIBS_USER --no-test-load
-
-          echo "ARTIFACT_EXTENSION=tar.gz" >> $GITHUB_ENV
-
-      - name: mac-build-package
-        if: ${{runner.os == 'macOS'}}
-        run: |
-            #  # need some additional headers (zlib) on catalina to compile python
-            #  # https://stackoverflow.com/a/58349403
-            #  for HEADER_PATH in /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/*
-            #  do
-            #    INCLUDE_PATH="/usr/local/include/$(basename $HEADER_PATH)"
-            #    if [ ! -f $INCLUDE_PATH ]; then
-            #      sudo ln -s $HEADER_PATH $INCLUDE_PATH 
-            #    fi
-            #  done
-
-            R CMD build ./
-
-            R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_USER --no-test-load
-
-            ## Now fix the binaries, per SYNR-341:
-            # it's v 3.0 or greater, with just one platform
-            mkdir -p ${PACKAGE_NAME}/libs
-            cp $R_LIBS_USER/${PACKAGE_NAME}/libs/PythonEmbedInR.so ${PACKAGE_NAME}/libs
-            install_name_tool -change "/Library/Frameworks/R.framework/Versions/${R_MINOR_VERSION}/Resources/lib/libR.dylib"  "/Library/Frameworks/R.framework/Versions/Current/Resources/lib/libR.dylib" ${PACKAGE_NAME}/libs/PythonEmbedInR.so
-
-            # update archive with modified binaries
-            for f in *.tgz
-            do
-              prefix="${f%.*}"
-              gunzip "$f"
-              # Note, >=3.0 there is only one platform
-              tar -rf "$prefix".tar ${PACKAGE_NAME}/libs/PythonEmbedInR.so
-              rm "$prefix".tar.gz
-              gzip "$prefix".tar
-              mv "$prefix".tar.gz "$prefix".tgz
-            done
-
-            echo "ARTIFACT_EXTENSION=tgz" >> $GITHUB_ENV
-
-      - name: windows-build-package
-        if: ${{runner.os == 'Windows'}}
-        shell: bash
-        run: |
-          R CMD build ./
-          R CMD INSTALL --build ${PACKAGE_NAME}_${PACKAGE_VERSION}.tar.gz --library=$R_LIBS_USER --no-test-load --merge-multiarch
-
-          echo "ARTIFACT_EXTENSION=zip" >> $GITHUB_ENV
-
-      - name: run-tests
-        shell: bash
-        run: |
-          echo ".libPaths(c('$R_LIBS_USER', .libPaths()));" > runTests.R
-          echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
-          echo "source('testthat.R')" >> runTests.R
-          echo "library(PythonEmbedInR);" >> runTests.R
-          echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
-          echo "library(PythonEmbedInR)" >> runTests.R
-          R --vanilla < runTests.R
-
-      - name: artifact-name
-        shell: bash
-        run: |
-          # we format our artifact names so we align to the same pattern
-          # used by the deploy gist written to work with jenkins.
-
-          ARTIFACT_NAME="${PACKAGE_NAME}_${PACKAGE_VERSION}.${ARTIFACT_EXTENSION}"
-
-          OS_LABEL=$(echo ${{runner.os}} | tr '[:upper:]' '[:lower:]')
-          if [[ "$OS_LABEL" == "macos" ]]; then
-            OS_LABEL="mac"
-          fi
-
-          # only the first two parts of the version here, e.g. 3.6
-          RVERS=$(echo $R_VERSION | awk -F"." '{print $1"."$2}')
-
-          UPLOAD_NAME="label=${OS_LABEL}-RVERS-${RVERS}"
-          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
-          echo "UPLOAD_NAME=$UPLOAD_NAME" >> $GITHUB_ENV
-
-      - name: upload-artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{env.UPLOAD_NAME}}
-          path: ${{env.ARTIFACT_NAME}}
+          echo "job output is ${{ deploy.outputs.package_version }}"
 
   deploy:
     runs-on: ubuntu-18.04
