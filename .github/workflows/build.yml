@@ -71,6 +71,12 @@ jobs:
           echo "R_MAJOR_VERSION=$R_MAJOR_VERSION" >> $GITHUB_ENV
           echo "R_MINOR_VERSION=$R_MINOR_VERSION" >> $GITHUB_ENV
 
+          # replace backslashes with forward slashes to unify path expectations
+          # (bash on windows will work fine with forward slashes)
+          R_LIBS=$(echo $GITHUB_WORKSPACE | sed 's/\\/\//g')/R_LIBS
+          mkdir -p $R_LIBS
+          echo "R_LIBS=$R_LIBS" >> $GITHUB_ENV
+
       - uses: actions/checkout@master
       - name: Setup R
         uses: r-lib/actions/setup-r@v1
