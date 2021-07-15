@@ -22,7 +22,6 @@ jobs:
 
   # on each of our matrix platforms, download the newly uploaded package from RAN
   check-deploy:
-    needs: deploy
 
     strategy:
       matrix:
