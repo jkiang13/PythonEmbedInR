@@ -112,7 +112,9 @@ jobs:
           fi
 
       - name: mac-lock
-        if: ${{runner.os == 'macOS'}} 
+        if: ${{runner.os == 'macOS'}}
+        run: |
+
           # create a lock file we use to prevent any other jobs from running on our self-hosted
           # mac runner. we need this because on MacOS you can only have one version of R installed
           # at a time and the GitHub matrix syntax doesn't support limiting the number of jobs
