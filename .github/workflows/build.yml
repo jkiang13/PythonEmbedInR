@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-10.15]
+        os: [windows-2019, mojave]
         #os: [ubuntu-18.04, macos-10.15, windows-2019]
         r: [4.0.5] 
         #r: [3.6.3, 4.0.5, 4.1.0]
