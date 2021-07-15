@@ -262,15 +262,13 @@ jobs:
           curl -s https://raw.githubusercontent.com/Sage-Bionetworks/CI-Build-Tools/master/r-pkg/deploy.sh | bash
           echo "::set-output name=s3_ran::$S3_RAN" 
 
-
   # on each of our matrix platforms, download the newly uploaded package from RAN
   check-deploy:
-    needs: deploy
 
     strategy:
       matrix:
         os: [ubuntu-18.04, macos-mojave, windows-2019]
-        r: [4.0.5, 4.1.0] 
+        r: [4.1.0]
 
     runs-on: ${{ matrix.os }}
 
@@ -287,16 +285,17 @@ jobs:
         run: |
           # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
           rm -rf /Library/Frameworks/R.framework/Versions/Current
-          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+          ln -s /Library/Frameworks/R.framework/Versions/4.0 /Library/Frameworks/R.framework/Versions/Current
 
       - name: check-install
+        shell: bash
         run: |
-          RAN=${{ needs.deploy.outputs.s3_ran }}
-          VERSION_TO_CHECK=${{ needs.build.outputs.package_version}} 
-          PACKAGE=PythonEmbedInR
+          RAN="http://"${{ needs.deploy.outputs.s3_ran }}
+          VERSION_TO_CHECK=${{ needs.build.outputs.package_version }}
+          PACKAGE="PythonEmbedInR"
           echo "if (available.packages(repos='$RAN')['$PACKAGE','Version'] != '$VERSION_TO_CHECK') { quit(save = 'no', status = 1) }" > test.R
           echo "try(remove.packages('$PACKAGE'), silent=T)" >> test.R
           echo "install.packages('$PACKAGE', repos=c('$RAN', 'http://cran.fhcrc.org'))" >> test.R
           echo "library('$PACKAGE')" >> test.R
-
+          R --vanilla < test.R
 
