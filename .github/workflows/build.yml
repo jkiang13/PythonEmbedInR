@@ -81,7 +81,7 @@ jobs:
           # windows bash will handle forward slashes fine and this
           # makes it easier to unify the path handling.
           R_LIBS_USER_SANITIZED=$(echo $R_LIBS_USER | sed 's/\\/\//g')
-          echo "R_LIBS_USER=$R_LIBS_USER_SANITIZED" >> GITHUB_ENV
+          echo "R_LIBS_USER=$R_LIBS_USER_SANITIZED" >> $GITHUB_ENV
 
 
       - name: install-R-lib-deps
