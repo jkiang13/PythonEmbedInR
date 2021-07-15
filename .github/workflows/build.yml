@@ -22,7 +22,7 @@ jobs:
       matrix:
         os: [windows-2019, macos-10.14]
         #os: [ubuntu-18.04, macos-10.15, windows-2019]
-        r: [4.0.5, 4.1.0] 
+        r: [4.0.5]
         #r: [3.6.3, 4.0.5, 4.1.0]
 
     steps:
@@ -63,8 +63,10 @@ jobs:
 
           R_VERSION=${{matrix.r}}
           R_MAJOR_VERSION=$(echo $R_VERSION | cut -f1 -d".")
+          R_MINOR_VERSION=$R_MAJOR_VERSION.$(echo $R_VERSION | cut -f2 -d".")
           echo "R_VERSION=$R_VERSION" >> $GITHUB_ENV
           echo "R_MAJOR_VERSION=$R_MAJOR_VERSION" >> $GITHUB_ENV
+          echo "R_MINOR_VERSION=$R_MINOR_VERSION" >> $GITHUB_ENV
 
       - name: linux-env
         if: ${{runner.os == 'Linux'}}
@@ -234,7 +236,7 @@ jobs:
             # it's v 3.0 or greater, with just one platform
             mkdir -p ${PACKAGE_NAME}/libs
             cp $R_LIBS/${PACKAGE_NAME}/libs/PythonEmbedInR.so ${PACKAGE_NAME}/libs
-            install_name_tool -change "/Library/Frameworks/R.framework/Versions/${R_VERSION}/Resources/lib/libR.dylib"  "/Library/Frameworks/R.framework/Versions/Current/Resources/lib/libR.dylib" ${PACKAGE_NAME}/libs/PythonEmbedInR.so
+            install_name_tool -change "/Library/Frameworks/R.framework/Versions/${R_MINOR_VERSION}/Resources/lib/libR.dylib"  "/Library/Frameworks/R.framework/Versions/Current/Resources/lib/libR.dylib" ${PACKAGE_NAME}/libs/PythonEmbedInR.so
 
             # update archive with modified binaries
             for f in *.tgz
@@ -259,16 +261,16 @@ jobs:
 
           echo "ARTIFACT_EXTENSION=zip" >> $GITHUB_ENV
 
-#      - name: run-tests
-#        shell: bash
-#        run: |
-#          echo ".libPaths(c('$R_LIBS', .libPaths()));" > runTests.R
-#          echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
-#          echo "source('testthat.R')" >> runTests.R
-#          echo "library(PythonEmbedInR);" >> runTests.R
-#          echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
-#          echo "library(PythonEmbedInR)" >> runTests.R
-#          $R --vanilla < runTests.R
+      - name: run-tests
+        shell: bash
+        run: |
+          echo ".libPaths(c('$R_LIBS', .libPaths()));" > runTests.R
+          echo "setwd(sprintf('%s/tests', getwd()));" >> runTests.R
+          echo "source('testthat.R')" >> runTests.R
+          echo "library(PythonEmbedInR);" >> runTests.R
+          echo "detach(\"package:PythonEmbedInR\", unload=TRUE);" >> runTests.R
+          echo "library(PythonEmbedInR)" >> runTests.R
+          $R --vanilla < runTests.R
 
       - name: artifact-name
         shell: bash
