@@ -190,7 +190,7 @@ jobs:
             OS_LABEL="mac"
           fi
 
-          UPLOAD_NAME="label=${OS_LABEL}-RVERS-${{ needs.build.shared-env.outputs.r_minor_version }}"
+          UPLOAD_NAME="label=${OS_LABEL}-RVERS-$R_MINOR_VERSION"
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
           echo "UPLOAD_NAME=$UPLOAD_NAME" >> $GITHUB_ENV
 
