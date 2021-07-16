@@ -88,6 +88,7 @@ jobs:
           echo "R_LIBS_USER=$R_LIBS_USER_SANITIZED" >> $GITHUB_ENV
 
           echo "::set-output name=package_version::$PACKAGE_VERSION"
+          echo "::set-output name=r_minor_version::$R_MINOR_VERSION"
 
       - name: setup-r-mac-mojave
         if: ${{matrix.os == 'macos-mojave'}}
@@ -188,10 +189,7 @@ jobs:
             OS_LABEL="mac"
           fi
 
-          # only the first two parts of the version here, e.g. 3.6
-          RVERS=$(echo $R_VERSION | awk -F"." '{print $1"."$2}')
-
-          UPLOAD_NAME="label=${OS_LABEL}-RVERS-${RVERS}"
+          UPLOAD_NAME="label=${OS_LABEL}-RVERS-${{ needs.build.shared-env.outputs.r_minor_version }}"
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
           echo "UPLOAD_NAME=$UPLOAD_NAME" >> $GITHUB_ENV
 
@@ -287,8 +285,9 @@ jobs:
         if: ${{matrix.os == 'macos-mojave'}}
         run: |
           # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
+          R_MINOR_VERSION="${{ needs.build.shared-env.outputs.r_minor_version }}"
           rm -rf /Library/Frameworks/R.framework/Versions/Current
-          ln -s /Library/Frameworks/R.framework/Versions/4.0 /Library/Frameworks/R.framework/Versions/Current
+          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
 
       - name: check-install
         shell: bash
