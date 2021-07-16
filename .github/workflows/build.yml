@@ -24,6 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     outputs:
       package_version: ${{ steps.shared-env.outputs.package_version }}
+      r_minor_version: ${{ steps.shared-env.outputs.r_minor_version }} 
 
     strategy:
       matrix:
