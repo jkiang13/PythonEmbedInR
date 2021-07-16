@@ -270,8 +270,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-18.04, macos-mojave, windows-2019]
-        r: [4.1.0]
+        os: [ubuntu-18.04, windows-2019, macos-mojave]
+        r: [4.0.5, 4.1.0]
 
     runs-on: ${{ matrix.os }}
 
