@@ -23,7 +23,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     outputs:
-      package_version: ${{ steps.shared-env.package_version }}
+      package_version: ${{ steps.shared-env.outputs.package_version }}
 
     strategy:
       matrix:
@@ -206,7 +206,7 @@ jobs:
     needs: build
     if: github.event_name == 'release'
     outputs:
-      s3_ran: ${{ steps.deploy-to-target.s3_ran }}
+      s3_ran: ${{ steps.deploy-to-target.outputs.s3_ran }}
 
     steps:
       - name: check-deployment-target
